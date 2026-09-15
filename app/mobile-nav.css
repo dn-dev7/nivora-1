@@ -5,7 +5,7 @@
     position:fixed;
     left:14px;
     right:14px;
-    bottom:max(12px,env(safe-area-inset-bottom));
+    bottom:calc(10px + env(safe-area-inset-bottom));
     z-index:50;
     height:68px;
     padding:7px 10px;
@@ -42,20 +42,15 @@
     transition:color .16s ease,transform .16s ease,background .16s ease;
   }
 
-  .mobile-nav button:nth-child(1){order:1}
-  .mobile-nav button:nth-child(4){order:2}
-  .mobile-nav button:nth-child(2){order:3}
-  .mobile-nav button:nth-child(3){order:4}
-  .mobile-nav button:nth-child(5){order:5}
 
   .mobile-nav button svg{
     width:23px;
     height:23px;
     margin:0;
-    stroke-width:1.75;
+    stroke-width:1.8;
   }
 
-  .mobile-nav button:not(:nth-child(2)).active{
+  .mobile-nav button:not(.nav-study).active{
     color:#c4f568;
     background:transparent;
   }
@@ -64,39 +59,35 @@
     display:none!important;
   }
 
-  .mobile-nav button:nth-child(2){
+  .mobile-nav button.nav-study{
     flex:0 0 54px;
     width:54px;
     height:52px;
     min-height:52px;
     margin:0 5px;
+    margin-top:0;
     border-radius:16px;
     background:#c4f568;
     color:#11150d;
     box-shadow:0 7px 18px #00000038;
   }
 
-  .mobile-nav button:nth-child(2) svg{display:none}
+  .mobile-nav button.nav-study svg{display:block;width:25px;height:25px;stroke-width:1.8}
+  .mobile-nav button.nav-study:after{content:none}
 
-  .mobile-nav button:nth-child(2):after{
-    content:'+';
-    display:block;
-    font-family:Arial,Helvetica,sans-serif;
-    font-size:34px;
-    font-weight:300;
-    line-height:1;
-    transform:translateY(-1px);
-  }
-
-  .mobile-nav button:nth-child(2):active,
-  .mobile-nav button:not(:nth-child(2)):active{
+  .mobile-nav button.nav-study:active,
+  .mobile-nav button:not(.nav-study):active{
     transform:scale(.94);
   }
 
-  .page{padding-bottom:116px}
+  .page{padding-bottom:calc(116px + env(safe-area-inset-bottom))}
 }
 
 @media (max-width:360px){
   .mobile-nav{left:10px;right:10px;padding-inline:7px}
-  .mobile-nav button:nth-child(2){flex-basis:50px;width:50px;margin-inline:3px}
+  .mobile-nav button.nav-study{flex-basis:50px;width:50px;margin-inline:3px}
 }
+
+@media(prefers-reduced-motion:reduce){.mobile-nav button,.mobile-nav button.nav-study:active{transition:none;animation:none}}
+
+@media(max-width:767px){.mobile-nav button svg,.mobile-nav button.active svg,.mobile-nav button.active:first-child svg{fill:none;stroke:currentColor;stroke-width:1.8}.mobile-nav button.nav-study.active{color:#11150d;box-shadow:0 0 0 2px #c4f56822,0 7px 18px #00000038}}
