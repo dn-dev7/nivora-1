@@ -6,25 +6,28 @@ on:
     branches:
       - main
     paths:
-      - 'mobile/**'
+      - 'app/**'
+      - 'components/**'
+      - 'lib/**'
+      - 'public/**'
+      - 'native-web/**'
+      - 'capacitor.config.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
       - '.github/workflows/build-nivostudy-apk.yml'
 
 permissions:
   contents: read
 
 concurrency:
-  group: nivostudy-apk-${{ github.ref }}
+  group: nivostudy-capacitor-apk-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build-apk:
-    name: Generate Android APK
+    name: Generate NivoStudy APK
     runs-on: ubuntu-latest
     timeout-minutes: 40
-
-    defaults:
-      run:
-        working-directory: mobile
 
     steps:
       - name: Checkout repository
@@ -39,6 +42,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22.13.0
+          cache: pnpm
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -50,27 +54,29 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Check Expo project
-        run: pnpm exec expo-doctor || true
+      - name: Generate Capacitor Android project
+        env:
+          CAPACITOR_SERVER_URL: https://nivostudy-dnmtfe3-cpus-projects.vercel.app
+        run: |
+          rm -rf android
+          pnpm exec cap add android
+          pnpm exec cap sync android
 
-      - name: Generate native Android project
-        run: pnpm exec expo prebuild --platform android --clean --no-install
-
-      - name: Build APK
-        working-directory: mobile/android
+      - name: Build installable APK
+        working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Rename APK
+      - name: Prepare APK
         run: |
           mkdir -p dist
           cp android/app/build/outputs/apk/debug/app-debug.apk dist/NivoStudy.apk
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NivoStudy-APK-${{ github.run_number }}
-          path: mobile/dist/NivoStudy.apk
+          path: dist/NivoStudy.apk
           if-no-files-found: error
           retention-days: 30
