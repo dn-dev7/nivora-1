@@ -1,4 +1,4 @@
-# Nivora
+# NivoStudy
 
 Aplicativo de estudo ativo, preparação para provas e progresso pessoal. Interface em português, com modo escuro e claro, sidebar no desktop e navegação inferior no mobile.
 
@@ -9,7 +9,7 @@ Aplicativo de estudo ativo, preparação para provas e progresso pessoal. Interf
 - Banco inicial de 40 questões originais: 20 de Matemática, 10 de Ciências, 5 de Português e 5 de História.
 - Quiz, treino por assunto, simulado com limite de tempo e respostas persistidas.
 - Correção de servidor, caderno de erros, flashcards com revisão espaçada simples.
-- Nivora Score transparente, XP, níveis, sequência, progresso e recordes básicos.
+- NivoStudy Score transparente, XP, níveis, sequência, progresso e recordes básicos.
 - Provas com preparação estimada e priorização de assuntos.
 - Atividades privadas por padrão, seguidores mútuos, feed, aplausos e comentários.
 - Desafios pessoais e resumo semanal compartilhável como texto.

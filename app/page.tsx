@@ -1,2 +1,2 @@
-import Nivora from './nivora';
-export default function Page(){return <Nivora/>}
+import NivoStudy from './nivora';
+export default function Page(){return <NivoStudy/>}

@@ -1,6 +1,6 @@
-# NIVORA — briefing de produto e implementação
+# NIVOSTUDY — briefing de produto e implementação
 
-Crie e evolua o NIVORA como uma plataforma de performance pessoal aplicada ao estudo. Use a lógica de atividades e evolução social do Strava e o acabamento de aplicativos modernos de fitness como referências conceituais. Não copie marcas, telas, componentes, textos nem identidade visual de outros produtos.
+Crie e evolua o NIVOSTUDY como uma plataforma de performance pessoal aplicada ao estudo. Use a lógica de atividades e evolução social do Strava e o acabamento de aplicativos modernos de fitness como referências conceituais. Não copie marcas, telas, componentes, textos nem identidade visual de outros produtos.
 
 O diferencial é conectar estudo ativo, preparação para provas e progresso social em um único ciclo:
 
@@ -40,7 +40,7 @@ Persista perfil, sessões, respostas, provas, flashcards e atividades em armazen
 
 ## 4. Hoje
 
-Mostre saudação, Nivora Score, foco de hoje, sequência, gráfico semanal, próxima prova e preparação estimada. O botão principal deve iniciar ou continuar a sessão ativa.
+Mostre saudação, NivoStudy Score, foco de hoje, sequência, gráfico semanal, próxima prova e preparação estimada. O botão principal deve iniciar ou continuar a sessão ativa.
 
 Apresente uma recomendação acionável, construída a partir de assuntos com baixa evidência ou menor aproveitamento. Mostre revisões pendentes, meta semanal e matérias em uma composição organizada. Se não houver prova ou histórico, ofereça uma ação simples em vez de recomendações fictícias.
 
@@ -90,7 +90,7 @@ Chame o indicador de “Preparação estimada” na interface em português; Exa
 
 Regra inicial: calcular a média dos conteúdos usando acertos recentes, um fator de volume de prática que exige ao menos cinco tentativas e redução gradual por tempo sem treino. Mostre volume e acertos separadamente. Explique que a estimativa não prevê a nota real.
 
-## 10. Nivora Score
+## 10. NivoStudy Score
 
 Utilize uma fórmula transparente de rotina recente, na escala 0–100. Regra inicial:
 
@@ -156,4 +156,4 @@ Inclua estados de carregamento, vazio, erro e sucesso. Falhas de salvamento deve
 
 **Etapa 3 — inteligência e materiais:** upload, geração por IA, revisão adaptativa, correção de questões abertas e análises mais avançadas.
 
-Não tente concentrar todos os recursos na Home. Conclua uma etapa coerente, verifique o funcionamento e diga com precisão o que foi implementado. O Nivora deve tornar o conhecimento visível e o próximo passo simples.
+Não tente concentrar todos os recursos na Home. Conclua uma etapa coerente, verifique o funcionamento e diga com precisão o que foi implementado. O NivoStudy deve tornar o conhecimento visível e o próximo passo simples.
