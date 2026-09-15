@@ -100,3 +100,10 @@ textarea.field{min-height:100px;resize:vertical;line-height:1.6}
 .reference-welcome .welcome-wordmark{font-family:var(--font-display);font-weight:400!important;font-size:clamp(1rem,4vw,1.3rem);letter-spacing:0!important;line-height:1.5}
 .reference-welcome .welcome-account,.reference-welcome .reference-welcome-content>p{font-family:var(--font-subtitle);font-weight:500;letter-spacing:0;line-height:1.5}
 @media(max-height:600px){.reference-welcome .reference-welcome-content>h1{font-size:1.05rem;line-height:1.45}}
+
+/* Geometric welcome lettering, balanced with the existing study interface. */
+.reference-welcome .reference-welcome-content>h1{font-family:'Space Grotesk',Geist,Arial,sans-serif;font-weight:600;font-size:clamp(1.65rem,6.5vw,2.1rem);line-height:1.2;letter-spacing:-.035em}
+.reference-welcome .welcome-wordmark{font-family:'Space Grotesk',Geist,Arial,sans-serif;font-weight:600!important;font-size:clamp(1.3rem,4.8vw,1.65rem);line-height:1.25;letter-spacing:-.04em!important}
+.reference-welcome .welcome-wordmark>span{font-weight:400}
+.reference-welcome .welcome-account{font-family:Geist,Arial,sans-serif;font-weight:500}
+@media(max-height:600px){.reference-welcome .reference-welcome-content>h1{font-size:1.4rem;line-height:1.18}}
