@@ -107,3 +107,12 @@ textarea.field{min-height:100px;resize:vertical;line-height:1.6}
 .reference-welcome .welcome-wordmark>span{font-weight:400}
 .reference-welcome .welcome-account{font-family:Geist,Arial,sans-serif;font-weight:500}
 @media(max-height:600px){.reference-welcome .reference-welcome-content>h1{font-size:1.4rem;line-height:1.18}}
+
+/* One consistent font throughout NivoStudy. */
+:root{--font-ui:'Space Grotesk',Arial,sans-serif;--font-display:'Space Grotesk',Arial,sans-serif;--font-subtitle:'Space Grotesk',Arial,sans-serif}
+html body,body .entry-screen,body .email-flow,body .auth-screen,body .workspace,body .nivo-opening-splash,[data-slot=dialog-content],[data-slot=select-content]{font-family:'Space Grotesk',Arial,sans-serif}
+body button,body input,body textarea,body select,body .mobile-nav button .nav-label,body .pet-loading>span:not(.thinking-dots),body .welcome-account,body .brand,body .welcome-wordmark,body .composer-wordmark,body .nivo-opening-brand>span{font-family:'Space Grotesk',Arial,sans-serif}
+.workspace .page-heading h1,.workspace .stat strong,.workspace .pulse-metric>strong,.workspace .score-number,.workspace .weekly-total,.workspace .timer-number,.workspace .activity-data strong,.nivo-opening-brand>span{font-family:'Space Grotesk',Arial,sans-serif;font-weight:600!important;letter-spacing:-.025em!important}
+.workspace .page-heading h1{font-size:clamp(1.8rem,3.4vw,2.5rem);line-height:1.2}
+.workspace .section-line>h2,.workspace .panel>h2,.workspace .study-grid .mode h2{font-weight:600}
+@media(max-width:767px){.workspace .page-heading h1{font-size:clamp(1.65rem,6.5vw,2.05rem);line-height:1.2}.workspace .stat strong,.workspace .pulse-metric>strong,.workspace .activity-data strong{font-size:clamp(1.25rem,4.6vw,1.6rem)!important}[data-view=Perfil] .stat strong{font-size:1.25rem!important}}
