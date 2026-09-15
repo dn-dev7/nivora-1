@@ -6,13 +6,24 @@
     "orientation": "default",
     "userInterfaceStyle": "dark",
     "scheme": "nivostudy",
+    "icon": "../public/nivostudy-logo.png",
+    "splash": {
+      "image": "../public/nivostudy-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#101110"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nivostudy.app"
+      "bundleIdentifier": "com.nivostudy.app",
+      "icon": "../public/nivostudy-logo.png"
     },
     "android": {
       "package": "com.nivostudy.app",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "../public/nivostudy-logo.png",
+        "backgroundColor": "#101110"
+      }
     },
     "web": {
       "bundler": "metro"
