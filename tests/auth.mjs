@@ -23,6 +23,8 @@ globalThis.fetch=async(url,options)=>{
   if(u.searchParams.get('grant_type')==='refresh_token')return b.refresh_token==='refresh-alice'?reply({access_token:'renewed-alice',refresh_token:'rotated-alice',expires_in:3600}):reply({error_code:'refresh_token_not_found'},400);
   return b.password==='valid-password'?reply({access_token:'valid-alice',refresh_token:'refresh-alice',expires_in:3600}):reply({error_code:mode==='unconfirmed'?'email_not_confirmed':'invalid_credentials'},400);
  }
+ if(u.pathname.endsWith('/otp')){assert.equal(b.create_user,true);return reply({})}
+ if(u.pathname.endsWith('/verify'))return b.token==='123456'?reply({access_token:'valid-alice',refresh_token:'refresh-alice',expires_in:3600}):reply({error_code:'otp_expired'},403);
  if(u.pathname.endsWith('/signup'))return reply({user:{id:'new-uuid'}});
  if(u.pathname.endsWith('/recover')||u.pathname.endsWith('/resend')){assert.equal(u.searchParams.get('redirect_to'),'https://nivora.daniel-fe4.chatgpt.site/auth/confirm');return reply({})}
  if(u.pathname.endsWith('/logout'))return reply({error_code:'bad_jwt'},401);
@@ -44,6 +46,10 @@ try{
  const invalid=await call({action:'login',email:'alice@example.test',password:'wrong'});assert.equal(invalid.status,400);assert.match(invalid.body.error,/incorretos/);assert.equal(values.size,0);
  mode='unconfirmed';assert.match((await call({action:'login',email:'alice@example.test',password:'wrong'})).body.error,/Confirme/);mode='normal';
  const login=await call({action:'login',email:' ALICE@example.test ',password:'valid-password'});assert.equal(login.body.ok,true);assert.equal(values.get(ACCESS),'valid-alice');assert.equal(login.headers.get('cache-control'),'no-store');assert.ok(!JSON.stringify(login.body).includes('valid-alice'));
+ assert.equal((await call({action:'otp',email:'alice@example.test',createUser:true})).body.sent,true);
+ assert.equal((await call({action:'verify',email:'alice@example.test',token:'12'})).status,400);
+ assert.match((await call({action:'verify',email:'alice@example.test',token:'000000'})).body.error,/código/);
+ assert.equal((await call({action:'verify',email:'alice@example.test',token:'123456'})).body.ok,true);
  assert.equal((await call({action:'recover',email:'alice@example.test'})).body.sent,true);
  assert.equal((await call({action:'resend',email:'alice@example.test'})).body.sent,true);
  assert.equal((await call({action:'session',access_token:'forged',refresh_token:'forged'})).status,400);assert.equal(values.get(ACCESS),'valid-alice');

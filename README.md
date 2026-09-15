@@ -26,7 +26,7 @@ pnpm dev
 pnpm build
 ```
 
-A aplicação usa Vinext e Cloudflare Workers. Em produção, perfis e estudos são armazenados no projeto NivoStudy do Supabase via uma Edge Function autenticada exclusivamente pelo servidor. O login usa e-mail e senha no Supabase Auth, com validação online da identidade, cookies HttpOnly/Secure e renovação de sessão no backend. `SUPABASE_URL` e `SUPABASE_SERVER_TOKEN` são configurados no ambiente de hospedagem; nenhuma chave de serviço é enviada ao navegador. As tabelas têm RLS e acesso direto de clientes bloqueado. As consultas permitidas estão em `supabase/statements.json`, e `supabase/schema.sql` documenta o esquema PostgreSQL. Para alterar consultas, atualize também esse registro no banco.
+A aplicação usa Vinext e Cloudflare Workers. Em produção, perfis e estudos são armazenados no projeto NivoStudy do Supabase via uma Edge Function autenticada exclusivamente pelo servidor. O login usa código por e-mail (OTP) no Supabase Auth, com senha como alternativa, com validação online da identidade, cookies HttpOnly/Secure e renovação de sessão no backend. `SUPABASE_URL` e `SUPABASE_SERVER_TOKEN` são configurados no ambiente de hospedagem; nenhuma chave de serviço é enviada ao navegador. As tabelas têm RLS e acesso direto de clientes bloqueado. As consultas permitidas estão em `supabase/statements.json`, e `supabase/schema.sql` documenta o esquema PostgreSQL. Para alterar consultas, atualize também esse registro no banco.
 
 Sem essas variáveis, o banco D1 permanece disponível para desenvolvimento local. O plugin de build configura o Worker e o binding D1 `DB` a partir de `.openai/hosting.json`. Gere mudanças de banco com `pnpm db:generate` e inspecione as migrações em `drizzle/`.
 
@@ -58,3 +58,10 @@ Veja o briefing revisado em [docs/NIVORA-PROMPT.md](docs/NIVORA-PROMPT.md).
 `tests/supabase.mjs` faz uma verificação real da Edge Function usando `NIVO_TEST_SUPABASE_URL` e `NIVO_TEST_SUPABASE_TOKEN`, ambos fornecidos no ambiente. Verifica bloqueio de chamadas sem credencial, consultas registradas, parâmetros com aspas, perfil e sessão persistidos, filtros por proprietário e rollback do lote. Rode somente em ambiente de teste: o script imprime os IDs criados para remoção posterior; ele não possui privilégios de administração para excluir perfis. Os registros temporários usados na implantação inicial foram removidos.
 
 O registro de consultas permite somente instruções já presentes no backend; o endpoint rejeita SQL arbitrário. Lotes de conclusões e revisões são transacionais. A credencial compartilhada fica apenas nos segredos do servidor; a Edge Function guarda somente seu hash e usa sua chave interna de serviço. RLS sem políticas nas tabelas é intencional: nega acesso direto de `anon` e `authenticated`; a autorização de cada usuário ocorre no backend autenticado do NivoStudy.
+
+
+## Entrada e prévia visual
+
+A entrada segue as proporções da gravação fornecida: mosaico original de estudos, mascote central, e-mail isolado, sugestões de domínio, código com seis posições e perguntas em conversa. Apple e Google aparecem desabilitados enquanto os provedores não estiverem configurados. Não simulam um login. Para ver as perguntas sem autenticar ou enviar dados, abra `/criar-conta?preview=1`; essa prévia é identificada na tela e não grava respostas.
+
+Para ativar a entrada por código, configure posteriormente SMTP e o template Magic Link no Supabase incluindo `{{ .Token }}`. As configurações do painel foram deixadas para o proprietário, conforme solicitado. Não foi enviada mensagem de teste por e-mail nem criado usuário real nesta atualização.

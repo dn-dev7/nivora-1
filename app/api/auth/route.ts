@@ -16,6 +16,8 @@ export async function POST(req:NextRequest){
   }
   const email=typeof b.email==='string'?b.email.trim().toLowerCase():'';
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254)return reply({error:'Digite um e-mail válido.'},400);
+  if(b.action==='otp'){await authRequest('otp?redirect_to='+encodeURIComponent(SITE+'/auth/confirm'),{email,create_user:b.createUser===true});return reply({sent:true})}
+  if(b.action==='verify'){if(typeof b.token!=='string'||!/^\d{6}$/.test(b.token))return reply({error:'Digite o código de 6 dígitos.'},400);const session=await authRequest('verify',{email,token:b.token,type:'email'});await storeSession(session);return reply({ok:true})}
   if(b.action==='recover'){await authRequest('recover?redirect_to='+encodeURIComponent(SITE+'/auth/confirm'),{email});return reply({sent:true})}
   if(b.action==='resend'){await authRequest('resend?redirect_to='+encodeURIComponent(SITE+'/auth/confirm'),{type:'signup',email});return reply({sent:true})}
   if(!['login','signup'].includes(b.action))return reply({error:'Ação inválida.'},400);
@@ -25,7 +27,7 @@ export async function POST(req:NextRequest){
   return reply({confirmation:true});
  }catch(error){
   if(error instanceof SyntaxError)return reply({error:'Pedido inválido.'},400);
-  if(error instanceof AuthError){const messages:Record<string,string>={invalid_credentials:'E-mail ou senha incorretos.',email_not_confirmed:'Confirme seu e-mail antes de entrar.',over_email_send_rate_limit:'Aguarde um minuto antes de pedir outro e-mail.',over_request_rate_limit:'Muitas tentativas. Aguarde um pouco e tente novamente.',email_address_not_authorized:'O envio de e-mails ainda precisa ser configurado. Tente novamente mais tarde.',weak_password:'Escolha uma senha mais forte.'};return reply({error:messages[error.code]??'Não foi possível continuar. Confira os dados e tente novamente.'},error.status===429?429:400)}
+  if(error instanceof AuthError){const messages:Record<string,string>={invalid_credentials:'E-mail ou senha incorretos.',email_not_confirmed:'Confirme seu e-mail antes de entrar.',over_email_send_rate_limit:'Aguarde um minuto antes de pedir outro e-mail.',over_request_rate_limit:'Muitas tentativas. Aguarde um pouco e tente novamente.',email_address_not_authorized:'O envio de e-mails ainda precisa ser configurado. Tente novamente mais tarde.',otp_expired:'O código expirou ou está incorreto. Peça outro código.',weak_password:'Escolha uma senha mais forte.'};return reply({error:messages[error.code]??'Não foi possível continuar. Confira os dados e tente novamente.'},error.status===429?429:400)}
   return reply({error:'Não foi possível conectar. Tente novamente.'},503);
  }
 }
