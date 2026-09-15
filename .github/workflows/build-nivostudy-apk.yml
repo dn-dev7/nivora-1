@@ -22,6 +22,9 @@ jobs:
     name: Generate native Android APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      CI: '1'
+      EXPO_NO_DOCTOR: '1'
 
     defaults:
       run:
@@ -30,11 +33,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 11.25.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,11 +45,17 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Install native app dependencies
-        run: pnpm install --no-frozen-lockfile
+      - name: Install native dependencies
+        run: npm install --no-audit --no-fund
 
-      - name: Generate native Android project
-        run: pnpm exec expo prebuild --platform android --clean --no-install
+      - name: Verify native toolchain
+        run: |
+          node --version
+          npx expo --version
+          npm ls expo react-native --depth=0
+
+      - name: Generate Android native project
+        run: npx expo prebuild --platform android --clean --no-install
 
       - name: Build native APK
         working-directory: mobile/android
@@ -64,6 +68,7 @@ jobs:
         run: |
           mkdir -p dist
           cp android/app/build/outputs/apk/debug/app-debug.apk dist/NivoStudy.apk
+          test -s dist/NivoStudy.apk
 
       - name: Upload native APK
         uses: actions/upload-artifact@v4
