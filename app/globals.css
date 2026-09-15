@@ -711,3 +711,11 @@ button:disabled{cursor:default;opacity:.5}
 }
 @media(max-width:360px){.mobile-nav{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));gap:0;padding-inline:5px}.mobile-nav button.nav-study{margin-inline:2px;flex-basis:50px;width:50px;height:50px;min-height:50px}.stat strong{font-size:1.15rem!important}}
 @media(prefers-reduced-motion:reduce){.mobile-nav button,.mobile-nav button.nav-study{transition:none}.mobile-nav button:active,.mobile-nav button.nav-study:active{transform:none}}
+
+/* Compact geometric subtitles complement Michroma without affecting reading text. */
+@font-face{font-family:'Space Grotesk';src:url('/space-grotesk.ttf') format('truetype');font-style:normal;font-weight:300 700;font-display:swap}
+:root{--font-subtitle:'Space Grotesk',Geist,Arial,sans-serif}
+.workspace .panel>h2,.workspace .item-content h3,.workspace .empty h3,.workspace .tool-card h3,.workspace .eyebrow,.workspace .page-heading>div>p:not(.eyebrow){font-family:var(--font-subtitle);letter-spacing:0;font-weight:500;line-height:1.5}
+.workspace .section-line>h2{font-family:var(--font-subtitle);font-weight:600;letter-spacing:0}
+.pet-loading{width:min(100%,320px);min-height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}.pet-loading>span:not(.thinking-dots){font-family:Geist,Arial,sans-serif;font-size:.875rem;line-height:1.5;color:var(--muted)}
+.empty{min-height:150px}.empty h3{margin-top:0}
