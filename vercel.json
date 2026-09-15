@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "next build",
+  "ignoreCommand": "test \"$VERCEL_PROJECT_ID\" != \"prj_8yGZYhSYNzcFGHyb09AzSlCboNIH\""
+}
