@@ -26,7 +26,7 @@ pnpm dev
 pnpm build
 ```
 
-A aplicação usa Vinext e Cloudflare Workers. Em produção, perfis e estudos são armazenados no projeto NivoStudy do Supabase via uma Edge Function autenticada exclusivamente pelo servidor. O login atual continua com ChatGPT. `SUPABASE_URL` e `SUPABASE_SERVER_TOKEN` são configurados no ambiente de hospedagem; nenhuma chave de serviço é enviada ao navegador. As tabelas têm RLS e acesso direto de clientes bloqueado. As consultas permitidas estão em `supabase/statements.json`, e `supabase/schema.sql` documenta o esquema PostgreSQL. Para alterar consultas, atualize também esse registro no banco.
+A aplicação usa Vinext e Cloudflare Workers. Em produção, perfis e estudos são armazenados no projeto NivoStudy do Supabase via uma Edge Function autenticada exclusivamente pelo servidor. O login usa e-mail e senha no Supabase Auth, com validação online da identidade, cookies HttpOnly/Secure e renovação de sessão no backend. `SUPABASE_URL` e `SUPABASE_SERVER_TOKEN` são configurados no ambiente de hospedagem; nenhuma chave de serviço é enviada ao navegador. As tabelas têm RLS e acesso direto de clientes bloqueado. As consultas permitidas estão em `supabase/statements.json`, e `supabase/schema.sql` documenta o esquema PostgreSQL. Para alterar consultas, atualize também esse registro no banco.
 
 Sem essas variáveis, o banco D1 permanece disponível para desenvolvimento local. O plugin de build configura o Worker e o binding D1 `DB` a partir de `.openai/hosting.json`. Gere mudanças de banco com `pnpm db:generate` e inspecione as migrações em `drizzle/`.
 
@@ -37,7 +37,11 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0001_good_angel.sql
 ```
 
-A autenticação hospedada depende dos headers de identidade encaminhados pelo ambiente Sites. Um lançamento independente precisa integrar um provedor real de autenticação e disponibilizar D1; não basta publicar como página estática. Não exponha um servidor que aceite esses headers diretamente de visitantes sem uma camada confiável de autenticação.
+No Supabase, configure **Authentication → URL Configuration** com Site URL `https://nivora.daniel-fe4.chatgpt.site` e Redirect URL `https://nivora.daniel-fe4.chatgpt.site/auth/confirm`. A página recebe links de confirmação e recuperação, valida a sessão no servidor e remove os tokens da URL. Mantenha a confirmação de e-mail habilitada e configure SMTP para envios a usuários fora da equipe do projeto. O envio padrão do Supabase é restrito e não serve para um lançamento geral.
+
+A chave publishable no módulo de Auth não concede acesso às tabelas. A identidade usada em todas as consultas é o ID retornado por `/auth/v1/user`; cookies e metadados editáveis não são confiados para autorização. Perfis anteriores do ChatGPT permanecem preservados com seus IDs antigos; contas Supabase têm IDs próprios e não são vinculadas automaticamente por e-mail.
+
+Em desenvolvimento, os cookies `__Host-` exigem HTTPS. Os testes em `tests/auth.mjs` verificam validação online, renovação, rejeição de tokens inválidos, proteção de origem, confirmação, recuperação e limpeza dos cookies usando um serviço Auth simulado. O teste de regras de estudo continua em `tests/core.mjs`.
 
 ## Privacidade e regras
 
