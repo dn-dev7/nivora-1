@@ -458,3 +458,38 @@ h2,h3{font-weight:650;letter-spacing:-.035em}
  .question,.timer-surface,.flashcard{border-radius:21px}.timer-number{font-weight:600}.option{border-radius:14px}.flashcard h2{font-weight:600}
 }
 @media(prefers-reduced-motion:reduce){.launch-splash{animation:none}.launch-splash svg{animation:none}}
+
+/* Closer reference proportions: quiet chrome and centered first-use screens. */
+.study-first,.study-tools-toggle{display:none}
+.profile-start{margin:28px 0 32px}.profile-start>.section-line h2{font-size:1rem;font-weight:700}.profile-start-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.profile-start-track>button{text-align:left;padding:20px;border:0;border-radius:18px;background:var(--card);color:var(--foreground)}.profile-start-track>button>svg{color:var(--primary);margin-bottom:18px}.profile-start-track h3{font-size:.9rem;margin-bottom:9px}.profile-start-track p{color:var(--muted);font-size:.75rem;line-height:1.5}.profile-start-track span{display:flex;align-items:center;gap:8px;color:var(--primary);font-size:.6875rem;font-weight:650;margin-top:19px}
+.launch-splash svg{fill:#3c3c3c;width:82px;height:82px}
+@media(max-width:767px){
+ .topbar{height:50px;padding-inline:10px}.header-title{font-size:.9375rem;font-weight:750}.header-left svg,.header-right svg{width:19px;height:19px;stroke-width:1.8}.header-left small{font-size:.6875rem}
+ .mobile-nav{height:calc(54px + env(safe-area-inset-bottom));padding:0 8px calc(6px + env(safe-area-inset-bottom))}.mobile-nav button{min-height:46px;color:#858585}.mobile-nav button.active svg{stroke-width:2.2}
+ .mobile-compose{width:48px;height:48px;border-radius:15px;right:19px;bottom:calc(73px + env(safe-area-inset-bottom));box-shadow:none}.mobile-compose svg{width:20px;height:20px}
+ .page{padding-top:17px}.primary,.secondary{font-size:.8125rem;min-height:40px;padding:10px 17px}.panel{border:0;border-radius:18px}.badge{font-size:.625rem}.section-line h2{font-size:1rem}
+ .study-first{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(76dvh - 108px);padding:10px 0 0}
+ .study-first .empty{padding:0 0 18px;max-width:100%;width:100%}.study-first .empty-preview{width:232px;height:170px;margin-bottom:26px;border-radius:24px}.study-first .empty h3{font-size:1.125rem;font-weight:750}.study-first .empty p{font-size:.75rem}.study-first>.secondary{background:var(--secondary);border:0;border-radius:15px;font-size:.75rem;padding:10px 19px;min-height:36px}
+ .study-tools-toggle{display:flex;align-items:center;justify-content:center;gap:8px;width:max-content;margin:17px auto 24px;font-size:.6875rem;background:none;border:0;color:var(--muted);min-height:36px;padding:7px 12px}
+ .study-grid.mobile-collapsed,.study-history.mobile-collapsed,.study-history-heading.mobile-collapsed{display:none!important}
+ .study-grid .mode:not(.mode-focus){background:var(--card);border:0!important;min-height:89px!important;padding:16px!important;border-radius:16px!important}.study-grid .mode h2{font-size:.875rem}.study-grid .mode p{font-size:.6875rem}.study-grid .mode .mode-symbol{width:35px;height:35px;border:0;border-radius:10px}.study-grid .mode .mode-symbol svg{width:18px;height:18px}.study-grid .mode:not(.mode-focus) .mode-action{font-size:.625rem;margin-top:7px!important}.study-grid .mode-focus{min-height:188px!important;border:0!important;border-radius:20px!important}.study-grid .mode-focus h2{font-size:1.4rem}
+ [data-view=Perfil] .profile-identity{flex-direction:row;align-items:center;text-align:left;gap:18px}[data-view=Perfil] .profile-monogram{width:62px;height:62px;font-size:1.5rem;background:var(--background);outline:1px solid var(--border);border:0}[data-view=Perfil] .profile-identity h1{font-size:.875rem}[data-view=Perfil] .profile-identity .muted{font-size:.6875rem}[data-view=Perfil] .page-heading{margin-bottom:9px}[data-view=Perfil] .stats-grid{margin:0 0 25px;gap:0;padding-left:80px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:0}[data-view=Perfil] .stat{padding:4px 2px;border:0;text-align:left}[data-view=Perfil] .stat strong{font-size:.9375rem;letter-spacing:-.035em}[data-view=Perfil] .stat p{font-size:.5625rem;line-height:1.4;margin-top:3px}
+ .profile-start{margin:16px -17px 28px 0}.profile-start>.section-line{padding-right:17px;margin-bottom:12px}.profile-start>.section-line h2{font-size:.9375rem}.profile-start>.section-line small{font-size:.625rem}.profile-start-track{display:flex;overflow-x:auto;gap:10px;padding-right:17px;scroll-snap-type:x mandatory;scrollbar-width:none}.profile-start-track::-webkit-scrollbar{display:none}.profile-start-track>button{flex:0 0 205px;scroll-snap-align:start;border-radius:17px;padding:17px;min-height:174px}.profile-start-track>button>svg{width:18px;height:18px;margin-bottom:17px}.profile-start-track h3{font-size:.8125rem}.profile-start-track p{font-size:.6875rem}.profile-start-track span{font-size:.625rem;margin-top:17px}
+ [data-view=Comunidade] [data-slot=tabs-trigger]{font-size:.6875rem;padding-bottom:12px}[data-view=Comunidade] [data-slot=tabs-trigger][data-state=active]{border-bottom-width:1px}[data-view=Comunidade] .activity-head{margin-bottom:15px}[data-view=Comunidade] .activity{padding:18px 0}[data-view=Comunidade] .activity>h2{font-size:1.125rem}[data-view=Comunidade] .activity .avatar{width:32px;height:32px;font-size:.8125rem}.activity-head h3{font-size:.8125rem}.activity-head small{font-size:.625rem}
+}
+@media(max-width:360px){[data-view=Perfil] .stats-grid{padding-left:70px}.profile-start-track>button{flex-basis:190px}}
+
+/* A restrained branded launch, with a crisp custom monogram. */
+.launch-splash{background:#050505;animation:splash-finish .24s ease .96s both}
+.splash-signature{display:flex;align-items:center;flex-direction:column;gap:17px;transform:translateY(-10px)}
+.launch-splash svg{width:75px;height:75px;fill:#ededed;animation:splash-symbol .55s cubic-bezier(.2,.7,.2,1) both;overflow:visible}
+.splash-diagonal{fill:#c4f568;animation:splash-diagonal-in .5s ease .13s both}
+.splash-stem{animation:splash-stem-in .45s ease both}.splash-stem-right{animation-delay:.09s}
+.splash-wordmark{font-size:1.2rem;font-weight:600;letter-spacing:-.06em;color:#ededed;animation:splash-name-in .35s ease .3s both;line-height:1}
+.splash-wordmark>span{color:#c4f568}
+@keyframes splash-symbol{from{transform:translateY(5px) scale(.95);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+@keyframes splash-stem-in{from{opacity:0}to{opacity:1}}
+@keyframes splash-diagonal-in{from{opacity:0}to{opacity:1}}
+@keyframes splash-name-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@keyframes splash-finish{to{opacity:0;visibility:hidden}}
+@media(prefers-reduced-motion:reduce){.launch-splash,.launch-splash svg,.splash-stem,.splash-diagonal,.splash-wordmark{animation:none!important}}
