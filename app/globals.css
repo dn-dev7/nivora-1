@@ -521,3 +521,12 @@ h2,h3{font-weight:650;letter-spacing:-.035em}
 @media(min-width:768px){.entry-welcome{padding:35px}.entry-intro{padding-top:125px}.entry-intro h1{font-size:1.85rem}.entry-brand{font-size:1.2rem}.entry-conversation{background:linear-gradient(#080808,#050505 190px);border-color:#202020}.entry-messages{padding-right:5px}.entry-composer form{border-radius:21px;padding:16px 17px 11px}}
 @media(max-height:600px){.entry-intro{padding-top:10px}.entry-brand{margin-bottom:0}.entry-intro h1{font-size:1.35rem}.entry-subtitle{margin-top:8px}.entry-actions{margin-top:18px}}
 @media(prefers-reduced-motion:reduce){.panel,.activity,.question,.entry-actions .primary{transition:none}}
+
+/* Supplied NivoStudy logo, preserved as the original image. */
+.logo-art{display:block;position:relative;overflow:hidden;flex-shrink:0;background:transparent!important;padding:0!important;border:0!important;border-radius:22%;width:40px;height:40px}
+.logo-art>img{position:absolute;width:184%!important;height:auto!important;max-width:none!important;left:-42%;top:-12%;object-fit:contain}
+.brand>.nav-logo:first-child{width:36px;height:36px;border-radius:22%;transform:none;background:transparent}
+.entry-brand>.entry-logo{width:30px;height:30px;margin-right:8px}
+.splash-signature>.splash-logo{width:100px;height:100px;animation:splash-symbol .55s cubic-bezier(.2,.7,.2,1) both}
+.splash-wordmark{margin-top:0}
+@media(prefers-reduced-motion:reduce){.splash-signature>.splash-logo{animation:none!important}}

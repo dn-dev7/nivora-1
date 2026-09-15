@@ -1,0 +1,4 @@
+project_id = "dzvvyrcpreprqzvsswie"
+[functions.nivostudy-database]
+verify_jwt = false
+entrypoint = "./functions/nivostudy-database/index.js"

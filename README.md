@@ -26,7 +26,9 @@ pnpm dev
 pnpm build
 ```
 
-A aplicação usa Vinext e Cloudflare Workers. O plugin de build configura o Worker e o binding D1 `DB` a partir de `.openai/hosting.json`. Gere mudanças de banco com `pnpm db:generate` e inspecione as migrações em `drizzle/`.
+A aplicação usa Vinext e Cloudflare Workers. Em produção, perfis e estudos são armazenados no projeto NivoStudy do Supabase via uma Edge Function autenticada exclusivamente pelo servidor. O login atual continua com ChatGPT. `SUPABASE_URL` e `SUPABASE_SERVER_TOKEN` são configurados no ambiente de hospedagem; nenhuma chave de serviço é enviada ao navegador. As tabelas têm RLS e acesso direto de clientes bloqueado. As consultas permitidas estão em `supabase/statements.json`, e `supabase/schema.sql` documenta o esquema PostgreSQL. Para alterar consultas, atualize também esse registro no banco.
+
+Sem essas variáveis, o banco D1 permanece disponível para desenvolvimento local. O plugin de build configura o Worker e o binding D1 `DB` a partir de `.openai/hosting.json`. Gere mudanças de banco com `pnpm db:generate` e inspecione as migrações em `drizzle/`.
 
 Para desenvolvimento local com banco, faça um build e aplique cada migração pendente uma única vez:
 
@@ -46,3 +48,9 @@ XP é deduplicado por conclusão e por questão no dia UTC. O Score reflete roti
 Antes de liberar a comunidade para múltiplos usuários, implemente bloqueio, denúncia e moderação. A versão inicial é publicada com acesso privado.
 
 Veja o briefing revisado em [docs/NIVORA-PROMPT.md](docs/NIVORA-PROMPT.md).
+
+## Verificação do Supabase
+
+`tests/supabase.mjs` faz uma verificação real da Edge Function usando `NIVO_TEST_SUPABASE_URL` e `NIVO_TEST_SUPABASE_TOKEN`, ambos fornecidos no ambiente. Verifica bloqueio de chamadas sem credencial, consultas registradas, parâmetros com aspas, perfil e sessão persistidos, filtros por proprietário e rollback do lote. Rode somente em ambiente de teste: o script imprime os IDs criados para remoção posterior; ele não possui privilégios de administração para excluir perfis. Os registros temporários usados na implantação inicial foram removidos.
+
+O registro de consultas permite somente instruções já presentes no backend; o endpoint rejeita SQL arbitrário. Lotes de conclusões e revisões são transacionais. A credencial compartilhada fica apenas nos segredos do servidor; a Edge Function guarda somente seu hash e usa sua chave interna de serviço. RLS sem políticas nas tabelas é intencional: nega acesso direto de `anon` e `authenticated`; a autorização de cada usuário ocorre no backend autenticado do NivoStudy.
