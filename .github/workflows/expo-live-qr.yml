@@ -68,3 +68,5 @@ jobs:
           echo "Expo Go URL: $EXPO_URL"
           echo 'Tunnel will stay online for about 15 minutes.'
           sleep 900
+
+# Triggered by ChatGPT for a temporary Expo Go testing session.
