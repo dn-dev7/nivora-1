@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';
+import {DatabaseSync} from 'node:sqlite';
+import fs from 'node:fs';
+import ts from 'typescript';
+import path from 'node:path';
+import os from 'node:os';
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'nivora-test-'));
+const compile=(file,output,transform=x=>x)=>fs.writeFileSync(path.join(dir,output),ts.transpileModule(transform(fs.readFileSync(file,'utf8')),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText);
+compile('lib/questions.ts','questions.mjs');compile('lib/metrics.ts','metrics.mjs');
+const {questions,gradeAnswers,publicQuestion}=await import(path.join(dir,'questions.mjs'));
+const {metrics,examReady}=await import(path.join(dir,'metrics.mjs'));
+const sql=new DatabaseSync(':memory:');for(const f of fs.readdirSync('drizzle').filter(x=>x.endsWith('.sql')).sort())sql.exec(fs.readFileSync('drizzle/'+f,'utf8'));
+const wrap=(statement,args=[])=>({bind(...next){return wrap(statement,next)},async first(){return sql.prepare(statement).get(...args)??null},async all(){return {results:sql.prepare(statement).all(...args)}},async run(){return sql.prepare(statement).run(...args)}});
+globalThis.__nivoraDB={prepare(statement){assert.equal(statement.split(';').filter(x=>x.trim()).length,1);return wrap(statement)},async batch(items){sql.exec('BEGIN');try{const results=[];for(const item of items)results.push(await item.run());sql.exec('COMMIT');return results}catch(e){sql.exec('ROLLBACK');throw e}}};
+globalThis.__nivoraUser={userId:'alice',fullName:'Alice',email:'alice@example.test'};
+compile('app/api/nivora/route.ts','route.mjs',s=>s.replace("import {NextRequest,NextResponse} from 'next/server';","const NextResponse={json:(data,opts)=>new Response(JSON.stringify(data),{...opts,headers:{...opts?.headers,'Content-Type':'application/json'}})};").replace("import {getChatGPTUser} from '@/app/chatgpt-auth';","const getChatGPTUser=async()=>globalThis.__nivoraUser;").replace("import {database} from '@/lib/db';","const database=()=>globalThis.__nivoraDB;").replace("from '@/lib/questions'","from './questions.mjs'"));
+const api=await import(path.join(dir,'route.mjs'));
+const call=async(body,user='alice',method='POST')=>{globalThis.__nivoraUser=user?{userId:user,fullName:user,email:user+'@example.test'}:null;const req=new Request('https://nivora.test/api/nivora',{method,headers:{'Content-Type':'application/json',Origin:'https://nivora.test'},...(method==='POST'?{body:JSON.stringify(body)}:{})});req.nextUrl=new URL(req.url);const res=await api[method](req);return {status:res.status,body:await res.json()}};
+const profile=user=>call({action:'profile',nickname:user,handle:user,subjects:['Ciências','Matemática'],goal:5},user);
+const quiet=console.error;console.error=()=>{};
+try{
+assert.equal((await call({},null,'GET')).status,401);
+await profile('alice');await profile('bob');
+const start=await call({action:'start',subject:'Ciências',topic:'Reações químicas',goal:'Revisar conteúdo',duration:25});assert.equal(start.status,200);const id=start.body.id;
+assert.equal((await call({action:'pause',id},'bob')).status,400);
+assert.equal((await call({action:'start',subject:'Ciências',topic:'Tabela periódica',goal:'Revisar conteúdo',duration:25})).status,400);
+sql.prepare('UPDATE sessions SET started=? WHERE id=?').run(Date.now()-70000,id);
+await call({action:'pause',id});const paused=sql.prepare('SELECT * FROM sessions WHERE id=?').get(id);assert.ok(paused.accumulated>=70);assert.equal(paused.running,0);
+await call({action:'resume',id});const done=await call({action:'finish',id,reflection:'Entendi como as substâncias se transformam.'});assert.equal(done.body.xp,10);
+await call({action:'finish',id,reflection:'Reenvio da mesma conclusão.'});assert.equal(sql.prepare('SELECT COUNT(*) n FROM activities WHERE id=?').get(id).n,1);
+assert.equal((await call({},'bob','GET')).body.activities.length,0);
+const quiz=await call({action:'startQuiz',subject:'Ciências',topic:'Todos',difficulty:'Todas',count:5,kind:'quiz',duration:0});assert.equal(quiz.status,200);assert.equal(quiz.body.questions.length,5);assert.ok(!('answer' in quiz.body.questions[0]));assert.ok(!('explanation' in quiz.body.questions[0]));
+const first=quiz.body.questions[0];await call({action:'answer',id:quiz.body.id,question:first.id,answer:1});const reload=await call({},'alice','GET');assert.equal(reload.body.activeRun.answers[first.id],1);
+assert.equal((await call({action:'completeQuiz',id:quiz.body.id,answers:[]},'bob')).status,400);
+const inputs=quiz.body.questions.map(q=>({id:q.id,answer:questions.find(x=>x.id===q.id).answer}));const finish=await call({action:'completeQuiz',id:quiz.body.id,answers:inputs});assert.equal(finish.status,200);assert.equal(finish.body.xp,40);assert.ok(finish.body.answers.every(a=>a.correct));await call({action:'completeQuiz',id:quiz.body.id,answers:inputs});assert.equal(sql.prepare('SELECT COUNT(*) n FROM activities WHERE id=?').get(quiz.body.id).n,1);
+await call({action:'visibility',id:quiz.body.id,visibility:'friends'});assert.equal((await call({},'bob','GET')).body.feed.length,0);await call({action:'follow',handle:'alice'},'bob');assert.equal((await call({},'bob','GET')).body.feed.length,0);await call({action:'follow',handle:'bob'});assert.equal((await call({},'bob','GET')).body.feed.length,1);
+assert.equal((await call({action:'comment',id,body:'Tentativa de ler atividade privada'},'bob')).status,404);
+await call({action:'comment',id:quiz.body.id,body:'Bom treino!'},'bob');await call({action:'applaud',id:quiz.body.id},'bob');const feed=(await call({},'bob','GET')).body.feed[0];assert.equal(feed.applause,1);assert.ok(!('data' in feed));assert.ok(!('owner' in feed));
+await call({action:'visibility',id:quiz.body.id,visibility:'public'},'bob');assert.equal(sql.prepare('SELECT visibility FROM activities WHERE id=?').get(quiz.body.id).visibility,'friends');
+await call({action:'card',subject:'Ciências',front:'O que é uma reação?',back:'Transformação com formação de novas substâncias.'});const card=sql.prepare('SELECT * FROM cards WHERE owner=?').get('alice');assert.equal((await call({action:'review',id:card.id,rating:2},'bob')).status,400);await call({action:'review',id:card.id,rating:2});assert.equal((await call({action:'review',id:card.id,rating:2})).status,400);assert.equal(sql.prepare("SELECT COUNT(*) n FROM activities WHERE kind='review'").get().n,1);
+assert.throws(()=>gradeAnswers([{id:'s1',answer:0},{id:'s1',answer:1}]));assert.throws(()=>gradeAnswers([{id:'s1',answer:10}]));
+const events=(await call({},'alice','GET')).body.activities;const m=metrics(events,5);assert.equal(m.total.count,5);assert.ok(m.total.seconds>=70);assert.equal(m.total.xp,55);assert.equal(m.streak,1);assert.ok(m.score<=100);assert.equal(metrics([],5).score,0);assert.equal(examReady([],{subject:'Ciências',topics:'["Reações químicas"]'}).score,0);
+for(const q of questions){assert.equal(publicQuestion(q).answer,undefined);assert.ok(q.options[q.answer]);}
+console.log('PASS: migrações, autenticação, isolamento por usuário, tempo/pausa/retomada, conclusões idempotentes, correção, retomada de respostas, privacidade do feed, comentários, aplausos, revisões, Score e XP.');
+}finally{console.error=quiet;sql.close();fs.rmSync(dir,{recursive:true,force:true})}

@@ -1,0 +1,1 @@
+ALTER TABLE `runs` ADD `draft` text DEFAULT '{}' NOT NULL;
