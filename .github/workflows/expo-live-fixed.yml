@@ -1,0 +1,55 @@
+name: Expo Live Fixed
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/expo-live-fixed.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  expo-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      EXPO_TUNNEL_SUBDOMAIN: nivostudy-qr-915-dnmtfe3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: |
+          pnpm install --no-frozen-lockfile
+          pnpm add -D @expo/ngrok
+
+      - name: Start fixed Expo tunnel
+        working-directory: mobile
+        run: |
+          nohup npx expo start --tunnel --go > /tmp/expo.log 2>&1 &
+          echo $! > /tmp/expo.pid
+          for i in $(seq 1 90); do
+            if curl -fsS 'http://127.0.0.1:8081/_expo/open?platform=android&runtime=expo' > /tmp/open.json 2>/dev/null; then
+              cat /tmp/open.json
+              break
+            fi
+            sleep 2
+          done
+          grep -q 'nivostudy-qr-915-dnmtfe3' /tmp/open.json
+
+      - name: Keep tunnel alive
+        run: |
+          echo 'Expo Go: exp://nivostudy-qr-915-dnmtfe3.exp.direct:80'
+          sleep 900
