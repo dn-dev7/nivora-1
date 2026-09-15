@@ -18,6 +18,16 @@
 /.vinext/
 /out/
 
+# mobile generated native projects
+/android/
+/ios/
+/mobile/android/
+/mobile/ios/
+/mobile/node_modules/
+/mobile/.expo/
+/mobile/.eas/
+/mobile/dist/
+
 # misc
 .DS_Store
 *.pem
