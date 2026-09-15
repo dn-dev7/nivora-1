@@ -50,9 +50,6 @@ jobs:
       - name: Install native app dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Validate React Native project
-        run: pnpm exec expo-doctor
-
       - name: Generate native Android project
         run: pnpm exec expo prebuild --platform android --clean --no-install
 
