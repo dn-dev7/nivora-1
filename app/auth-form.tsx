@@ -2,7 +2,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {ArrowLeft,Eye,EyeOff,X} from 'lucide-react';
 
-export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup';onBack:()=>void;onSignedIn:(demo?:boolean)=>void}){
+export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup';onBack:()=>void;onSignedIn:()=>void}){
  const [view,setView]=useState<'credentials'|'recover'>('credentials');
  const [email,setEmail]=useState('');
  const [password,setPassword]=useState('');
@@ -48,7 +48,7 @@ export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup'
     throw Error('A confirmação de e-mail ainda está ativa no Supabase. Desative “Confirm email” para usar cadastro direto com Gmail e senha.');
    }
    setPassword('');
-   onSignedIn(false);
+   onSignedIn();
   }catch(e){
    setError(e instanceof Error?e.message:'Não foi possível continuar.');
   }finally{
