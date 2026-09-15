@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "NivoStudy",
+    "slug": "nivostudy",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "dark",
+    "scheme": "nivostudy",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nivostudy.app"
+    },
+    "android": {
+      "package": "com.nivostudy.app",
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
