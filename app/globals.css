@@ -688,3 +688,26 @@ button:disabled{cursor:default;opacity:.5}
 .reference-conversation .reference-composer input:focus-visible{outline:none;box-shadow:none}
 .form input,.form textarea,input.field{border-radius:12px;caret-color:var(--primary)}
 .form input:focus-visible,.form textarea:focus-visible,input.field:focus-visible{outline:2px solid #c4f56880;outline-offset:2px}
+
+/* NivoStudy typography: display accents, readable Geist body. */
+@font-face{font-family:Michroma;src:url('/michroma-regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+:root{--font-display:Michroma,Geist,Arial,sans-serif}
+.page-heading h1,.section-line>h2,.home-welcome h1,.score-number,.stat strong,.pulse-metric>strong,.timer-display,.welcome-wordmark,.composer-wordmark{font-family:var(--font-display);font-weight:400!important;letter-spacing:0!important;font-synthesis:none}
+.page-heading h1{font-size:clamp(1.45rem,3.5vw,2.25rem);line-height:1.4;overflow-wrap:anywhere}
+.section-line>h2{font-size:1rem;line-height:1.6}.stat strong,.pulse-metric>strong{font-size:1.4rem!important;line-height:1.5}
+.score-number{font-size:clamp(2.4rem,6vw,4rem)}
+.study-method{margin-bottom:20px}.study-method>h2{font-family:var(--font-display);font-size:1rem;font-weight:400}.study-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0}.study-steps b{font-size:.875rem}.study-steps p,.study-method>small{font-size:.8125rem;color:var(--muted);line-height:1.6}.auth-opening{display:grid;place-items:center;min-height:100dvh;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}
+@media(max-width:767px){
+ .mobile-nav{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom,0px));height:66px;padding:6px 7px;align-items:center;gap:3px;border:1px solid #284032;border-radius:25px;background:#08100df2;box-shadow:0 5px 16px #0003;max-width:560px;margin-inline:auto;backdrop-filter:blur(18px)}
+ .mobile-nav button{flex:1;min-width:44px;min-height:48px;width:auto;padding:0;border-radius:14px;color:#b0b9b3;transition:color 150ms ease,transform 150ms ease,background-color 150ms ease;-webkit-tap-highlight-color:transparent}
+ .mobile-nav button svg,.mobile-nav button.active svg{width:22px;height:22px;stroke-width:1.8;fill:none;stroke:currentColor}
+ .mobile-nav button.active{color:var(--primary);background:transparent}.mobile-nav button.active:before,.mobile-nav button.active:after{content:none}.mobile-nav button.active:first-child svg{fill:none;stroke:currentColor}
+ .mobile-nav button:active{transform:scale(.94)}
+ .mobile-nav button.nav-study{flex:0 0 54px;width:54px;height:54px;min-height:54px;margin:0 4px;align-self:center;border-radius:18px;background:var(--primary);color:#11200b;box-shadow:none;transition:transform 150ms ease,filter 150ms ease}
+ .mobile-nav button.nav-study svg{width:25px;height:25px;stroke-width:1.8}.mobile-nav button.nav-study:active{transform:scale(.92);filter:brightness(1.06);animation:none}
+ .page{padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))}.mobile-compose{bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+ .study-steps{grid-template-columns:1fr;gap:10px}.page-heading h1{font-size:clamp(1.3rem,5.3vw,1.75rem)}
+ [data-view=Perfil] .stat strong{font-size:1rem!important}
+}
+@media(max-width:360px){.mobile-nav{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));gap:0;padding-inline:5px}.mobile-nav button.nav-study{margin-inline:2px;flex-basis:50px;width:50px;height:50px;min-height:50px}.stat strong{font-size:1.15rem!important}}
+@media(prefers-reduced-motion:reduce){.mobile-nav button,.mobile-nav button.nav-study{transition:none}.mobile-nav button:active,.mobile-nav button.nav-study:active{transform:none}}

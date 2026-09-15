@@ -1,3 +1,4 @@
+import {extraQuestions} from './question-expansion';
 export type Question={id:string;subject:string;topic:string;difficulty:string;text:string;options:string[];answer:number;explanation:string};
 const q=(id:string,subject:string,topic:string,text:string,options:string[],answer:number,explanation:string,difficulty='Média'):Question=>({id,subject,topic,text,options,answer,explanation,difficulty});
 export const questions:Question[]=[
@@ -22,7 +23,10 @@ q('h2','História','Guerra Fria','A corrida espacial foi:',['Uma disputa tecnol�
 q('h3','História','Primeira Guerra','A Primeira Guerra Mundial começou em:',['1789','1914','1939','1945'],1,'O conflito começou em 1914 e terminou em 1918.','Fácil'),
 q('h4','História','Primeira Guerra','Qual acordo impôs condições à Alemanha após a Primeira Guerra?',['Tratado de Versalhes','Tratado de Tordesilhas','Pacto de Varsóvia','Acordo de Paris de 2015'],0,'O Tratado de Versalhes, assinado em 1919, estabeleceu condições para a Alemanha.'),
 q('h5','História','Guerra Fria','A queda do Muro de Berlim ocorreu em:',['1918','1945','1961','1989'],3,'O Muro de Berlim foi aberto em novembro de 1989.','Fácil')
+,...extraQuestions
 ];
-export const defaultSubjects=['Ciências','Matemática','Português','História'];
+export const defaultSubjects=['Ciências','Matemática','Português','História','Geografia','Inglês','Biologia','Física','Química'];
 export function publicQuestion(x:Question){const {answer,explanation,...rest}=x;return rest}
 export function gradeAnswers(items:{id:string;answer:number}[]){if(!Array.isArray(items)||items.length<1||items.length>40||new Set(items.map(x=>x.id)).size!==items.length)throw Error('Lista de respostas inválida.');return items.map(item=>{const question=questions.find(q=>q.id===item.id);if(!question||!Number.isInteger(item.answer)||item.answer< -1||item.answer>=question.options.length)throw Error('Resposta inválida.');return {...question,selected:item.answer,correct:item.answer===question.answer}})}
+
+export function shuffled<T>(items:T[]):T[]{const result=[...items];for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]]}return result}

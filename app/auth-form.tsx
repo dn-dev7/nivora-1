@@ -1,9 +1,10 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
+import {LoadingPet} from './pet';
 import {ArrowLeft,Eye,EyeOff,X} from 'lucide-react';
 
 export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup';onBack:()=>void;onSignedIn:()=>void}){
- const [view,setView]=useState<'credentials'|'recover'|'confirmation'>('credentials');
+ const [view,setView]=useState<'credentials'|'recover'|'confirmation'|'opening'>('credentials');
  const [email,setEmail]=useState('');
  const [password,setPassword]=useState('');
  const [show,setShow]=useState(false);
@@ -49,7 +50,7 @@ export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup'
     setPassword('');setView('confirmation');return;
    }
    setPassword('');
-   onSignedIn();
+   setView('opening');await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));onSignedIn();
   }catch(e){
    setError(e instanceof Error?e.message:'Não foi possível continuar.');
   }finally{
@@ -64,6 +65,7 @@ export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup'
   else onBack();
  };
 
+ if(view==='opening')return <main className="entry-screen auth-opening"><LoadingPet label="Abrindo seus estudos…"/></main>;
  return <main className="entry-screen email-flow" style={height?{height,minHeight:0}:undefined}>
   <header className="email-close"><button aria-label="Fechar" disabled={busy} onClick={onBack}><X size={18}/></button></header>
   <form className="email-step" aria-busy={busy} onSubmit={e=>{e.preventDefault();if(view==='confirmation')return;void submit(view==='recover'?'recover':mode==='signup'?'signup':'login')}}>

@@ -6,7 +6,7 @@ import path from 'node:path';
 import os from 'node:os';
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'nivora-test-'));
 const compile=(file,output,transform=x=>x)=>fs.writeFileSync(path.join(dir,output),ts.transpileModule(transform(fs.readFileSync(file,'utf8')),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText);
-compile('lib/questions.ts','questions.mjs');compile('lib/metrics.ts','metrics.mjs');
+compile('lib/question-expansion.ts','question-expansion.mjs');compile('lib/questions.ts','questions.mjs',s=>s.replace("'./question-expansion'","'./question-expansion.mjs'"));compile('lib/metrics.ts','metrics.mjs');
 const {questions,gradeAnswers,publicQuestion}=await import(path.join(dir,'questions.mjs'));
 const {metrics,examReady}=await import(path.join(dir,'metrics.mjs'));
 const sql=new DatabaseSync(':memory:');for(const f of fs.readdirSync('drizzle').filter(x=>x.endsWith('.sql')).sort())sql.exec(fs.readFileSync('drizzle/'+f,'utf8'));

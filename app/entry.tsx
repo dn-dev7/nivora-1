@@ -8,7 +8,7 @@ import {RadioGroup,RadioGroupItem} from '@/components/ui/radio-group';
 export {Mascot,LoadingPet} from './pet';
 import {Mascot,LoadingPet} from './pet';
 const questions=['Qual seu nome?','Quer escolher suas matérias agora?','O que você quer estudar?','Quantos dias por semana quer estudar?','Qual vai ser seu nome de usuário?'];
-const options=['Ciências','Matemática','Português','História'];
+const options=['Ciências','Matemática','Português','História','Geografia','Inglês','Biologia','Física','Química'];
 const collage=['Reações químicas','Um assunto por vez','Seu ritmo','Guerra Fria','Mais uma revisão','Matemática','Uma ideia nova','Conquista de hoje','Perguntar. Aprender.'];
 function QuestionText({text,animate}:{text:string;animate:boolean}){
  const [count,setCount]=useState(animate?0:text.length);
