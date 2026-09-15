@@ -779,3 +779,11 @@ button:disabled{cursor:default;opacity:.5}
  .page{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
 }
 @media(max-width:360px){.mobile-nav{grid-template-columns:repeat(4,minmax(0,1fr)) 62px;height:60px}.mobile-nav:before{right:70px}.mobile-nav button{height:50px}.mobile-nav button.nav-study{width:60px;height:60px;min-height:60px}.mobile-nav button .nav-label{font-size:.625rem}}
+/* Softer capsule surface and consistent study navigation symbols. */
+@media(max-width:767px){
+ .mobile-nav:before{background:linear-gradient(180deg,#18221ded,#101813f5);border:1px solid #45514980;box-shadow:inset 0 1px 0 #ffffff0a,0 6px 18px #0003;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+ .mobile-nav button{color:#c5cbc7}.mobile-nav button.active:not(.nav-study){background:linear-gradient(180deg,#2b3b2d,#233227);color:var(--primary);box-shadow:inset 0 1px 0 #dfffac0c}
+ .mobile-nav button svg,.mobile-nav button.active svg{width:23px;height:23px;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+ .mobile-nav button.nav-study{background:linear-gradient(145deg,#d5ff91,var(--primary));border:1px solid #dfff9b60;box-shadow:inset 0 1px 0 #ffffff24,0 4px 12px #0002}.mobile-nav button.nav-study svg{width:27px;height:27px;stroke-width:1.8}
+ .mobile-nav button .nav-label{font-weight:500}.mobile-nav button.active .nav-label{font-weight:600}
+}
