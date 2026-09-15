@@ -78,3 +78,12 @@ textarea.field{min-height:100px;resize:vertical;line-height:1.6}
  [data-slot=dialog-content]{max-height:calc(100dvh - 12px)}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.primary,.secondary,.ghost,.option,.mode,.mobile-nav button{transition:none}}
+
+
+.nivo-opening-splash{position:fixed;inset:0;z-index:1000;background:#050c09;display:grid;place-items:center;padding:env(safe-area-inset-top,0px) max(20px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(20px,env(safe-area-inset-left,0px));transition:opacity 180ms ease;isolation:isolate}
+.nivo-opening-splash.is-leaving{opacity:0;pointer-events:none}
+.nivo-opening-brand{display:flex;flex-direction:column;align-items:center;gap:14px;animation:nivo-logo-open 350ms ease both}
+.nivo-opening-brand img{display:block;width:clamp(128px,30vw,160px);height:auto;border-radius:26px}
+.nivo-opening-brand>span{font-family:Geist,Arial,sans-serif;font-size:1.65rem;font-weight:650;letter-spacing:-.045em;color:#f1faee}
+@keyframes nivo-logo-open{from{opacity:0;transform:translateY(4px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.nivo-opening-splash{transition:none}.nivo-opening-brand{animation:none}}
