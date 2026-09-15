@@ -1,0 +1,70 @@
+name: Expo Live QR
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/expo-live-qr.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  expo-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: mobile/package.json
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: |
+          pnpm install --no-frozen-lockfile
+          pnpm add -D @expo/ngrok
+
+      - name: Start Expo tunnel
+        working-directory: mobile
+        run: |
+          nohup npx expo start --tunnel > /tmp/expo.log 2>&1 &
+          echo $! > /tmp/expo.pid
+
+          for i in $(seq 1 90); do
+            URL=$(grep -Eo 'exp://[^[:space:]]+' /tmp/expo.log | head -n 1 || true)
+            if [ -n "$URL" ]; then
+              echo "$URL" > /tmp/expo-url.txt
+              break
+            fi
+            sleep 2
+          done
+
+          cat /tmp/expo.log
+
+          if [ ! -s /tmp/expo-url.txt ]; then
+            echo 'Expo tunnel URL was not generated.'
+            exit 1
+          fi
+
+          URL=$(cat /tmp/expo-url.txt)
+          echo "EXPO_URL=$URL" >> "$GITHUB_ENV"
+          echo '### Expo Go' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo "Open this in Expo Go: \`$URL\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep tunnel alive for testing
+        run: |
+          echo "Expo Go URL: $EXPO_URL"
+          echo 'Tunnel will stay online for about 15 minutes.'
+          sleep 900
