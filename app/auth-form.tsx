@@ -3,7 +3,7 @@ import {useEffect,useRef,useState} from 'react';
 import {ArrowLeft,Eye,EyeOff,X} from 'lucide-react';
 import {InputOTP,InputOTPGroup,InputOTPSlot} from '@/components/ui/input-otp';
 
-export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup';onBack:()=>void;onSignedIn:()=>void}){
+export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup';onBack:()=>void;onSignedIn:(demo?:boolean)=>void}){
  const [view,setView]=useState<'email'|'code'|'password'|'recover'>('email');
  const [email,setEmail]=useState('');
  const [password,setPassword]=useState('');
