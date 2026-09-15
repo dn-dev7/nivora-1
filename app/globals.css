@@ -679,3 +679,12 @@ button:disabled{cursor:default;opacity:.5}
 .reference-conversation .composer-wordmark i,.welcome-wordmark i{background:none;color:var(--primary)}
 .email-question .email-password{margin-top:18px}
 .email-question .auth-hint{font-size:.75rem;color:var(--muted);margin-top:12px}
+
+/* Rounded writing surfaces: the focus follows each existing field. */
+.email-plain-input,.email-password input{border-radius:12px}
+.email-plain-input:focus-visible,.email-password input:focus-visible{outline:2px solid #c4f56880;outline-offset:4px;border-radius:12px}
+.reference-conversation .reference-composer form{border-radius:20px;overflow:hidden;transition:border-color 140ms ease,box-shadow 140ms ease}
+.reference-conversation .reference-composer form:focus-within{border-color:#c4f56870;box-shadow:0 0 0 2px #c4f5680c}
+.reference-conversation .reference-composer input:focus-visible{outline:none;box-shadow:none}
+.form input,.form textarea,input.field{border-radius:12px;caret-color:var(--primary)}
+.form input:focus-visible,.form textarea:focus-visible,input.field:focus-visible{outline:2px solid #c4f56880;outline-offset:2px}
