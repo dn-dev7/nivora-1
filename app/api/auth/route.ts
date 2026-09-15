@@ -2,7 +2,7 @@ import {NextRequest,NextResponse} from 'next/server';
 import {cookies} from 'next/headers';
 import {ACCESS,AuthError,authRequest,clearSession,getAuthUser,storeSession} from '@/lib/supabase-auth';
 const reply=(body:unknown,status=200)=>NextResponse.json(body,{status,headers:{'Cache-Control':'no-store'}});
-const SITE='https://nivora.daniel-fe4.chatgpt.site';
+const SITE='https://nivostudy-dnmtfe3-cpus-projects.vercel.app';
 export async function POST(req:NextRequest){
  try{
   if(req.headers.get('origin')!==req.nextUrl.origin)return reply({error:'Origem inválida.'},403);
