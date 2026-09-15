@@ -1,21 +1,17 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
 import {ArrowLeft,Eye,EyeOff,X} from 'lucide-react';
-import {InputOTP,InputOTPGroup,InputOTPSlot} from '@/components/ui/input-otp';
 
 export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup';onBack:()=>void;onSignedIn:(demo?:boolean)=>void}){
- const [view,setView]=useState<'email'|'code'|'password'|'recover'>('email');
+ const [view,setView]=useState<'credentials'|'recover'>('credentials');
  const [email,setEmail]=useState('');
  const [password,setPassword]=useState('');
- const [code,setCode]=useState('');
  const [show,setShow]=useState(false);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState('');
  const [notice,setNotice]=useState('');
- const [remaining,setRemaining]=useState(0);
  const [height,setHeight]=useState<number|null>(null);
  const emailInput=useRef<HTMLInputElement>(null);
- const codeInput=useRef<HTMLInputElement>(null);
 
  useEffect(()=>{
   const viewport=window.visualViewport;
@@ -25,53 +21,34 @@ export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup'
   return()=>viewport?.removeEventListener('resize',resize);
  },[]);
 
- useEffect(()=>{
-  if(!remaining)return;
-  const timer=setTimeout(()=>setRemaining(remaining-1),1000);
-  return()=>clearTimeout(timer);
- },[remaining]);
+ const cleanEmail=email.trim().toLowerCase();
+ const validEmail=/^[^\s@]+@gmail\.com$/i.test(cleanEmail);
+ const validPassword=mode==='signup'?password.length>=8:password.length>=1;
 
- const validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-
- const callAuth=async(action:'otp'|'verify'|'login'|'recover')=>{
+ const submit=async(action:'login'|'signup'|'recover')=>{
   if(busy)return;
   setError('');
   setNotice('');
+  if(!validEmail){setError('Use um endereço do Gmail, por exemplo seu@gmail.com.');return}
+  if(action!=='recover'&&!validPassword){setError(mode==='signup'?'Crie uma senha com pelo menos 8 caracteres.':'Digite sua senha.');return}
   setBusy(true);
   try{
    const response=await fetch('/api/auth',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-     action,
-     email:email.trim().toLowerCase(),
-     password,
-     token:code,
-     createUser:mode==='signup'
-    })
+    body:JSON.stringify({action,email:cleanEmail,password})
    });
    const data:any=await response.json();
    if(!response.ok)throw Error(data.error??'Não foi possível continuar.');
-
-   if(action==='otp'){
-    setCode('');
-    setView('code');
-    setRemaining(60);
-    setNotice('Enviamos a confirmação para seu e-mail.');
-    requestAnimationFrame(()=>codeInput.current?.focus());
-    return;
-   }
-   if(action==='verify'){
-    setPassword('');
-    onSignedIn();
-    return;
-   }
    if(action==='recover'){
-    setNotice('Se o e-mail estiver cadastrado, você receberá um link para recuperar o acesso.');
+    setNotice('Se essa conta existir, você receberá um link para trocar a senha.');
     return;
+   }
+   if(data.confirmation){
+    throw Error('A confirmação de e-mail ainda está ativa no Supabase. Desative “Confirm email” para usar cadastro direto com Gmail e senha.');
    }
    setPassword('');
-   onSignedIn();
+   onSignedIn(false);
   }catch(e){
    setError(e instanceof Error?e.message:'Não foi possível continuar.');
   }finally{
@@ -79,38 +56,43 @@ export default function AuthForm({mode,onBack,onSignedIn}:{mode:'login'|'signup'
   }
  };
 
- const resend=()=>{if(!remaining)void callAuth('otp')};
- const back=()=>{setError('');setNotice('');if(view==='email')onBack();else setView('email')};
+ const back=()=>{
+  setError('');
+  setNotice('');
+  if(view==='recover')setView('credentials');
+  else onBack();
+ };
 
  return <main className="entry-screen email-flow" style={height?{height,minHeight:0}:undefined}>
   <header className="email-close"><button aria-label="Fechar" disabled={busy} onClick={onBack}><X size={18}/></button></header>
-  <form className="email-step" onSubmit={e=>{e.preventDefault();void callAuth(view==='email'?'otp':view==='code'?'verify':view==='password'?'login':'recover')}}>
+  <form className="email-step" onSubmit={e=>{e.preventDefault();void submit(view==='recover'?'recover':mode==='signup'?'signup':'login')}}>
    <div className="email-question" key={view}>
-    <h1>{view==='code'?'Digite seu código':view==='password'?'Entre com sua senha':view==='recover'?'Recupere seu acesso':'Entre no seu ritmo'}</h1>
-    {view==='code'?<>
-     <p>Enviamos uma confirmação para<br/><strong>{email}</strong></p>
-     <p className="auth-hint">Digite o código de 6 dígitos recebido por e-mail. Se chegar um link de confirmação, ele também funciona.</p>
-     <label className="sr-only" htmlFor="entry-code">Código de verificação</label>
-     <InputOTP ref={codeInput} id="entry-code" containerClassName="otp-field" inputMode="numeric" autoComplete="one-time-code" autoFocus maxLength={6} required pattern="[0-9]*" value={code} onChange={value=>setCode(value.replace(/\D/g,''))} disabled={busy}>
-      <InputOTPGroup className="otp-cells">{Array.from({length:6},(_,i)=><InputOTPSlot index={i} key={i}/>)}</InputOTPGroup>
-     </InputOTP>
-     <button type="button" className="email-resend" disabled={busy||remaining>0} onClick={resend}>{remaining?`Reenviar em ${remaining}s`:'Reenviar código'}</button>
-    </>:view==='password'?<>
+    <h1>{view==='recover'?'Recupere seu acesso':mode==='signup'?'Crie sua conta':'Entre no seu ritmo'}</h1>
+    {view==='recover'?<p>Digite seu Gmail e enviaremos um link para trocar sua senha.</p>:<p>{mode==='signup'?'Por enquanto, sua conta precisa apenas de Gmail e senha.':'Use o mesmo Gmail e senha da sua conta.'}</p>}
+
+    <label className="sr-only" htmlFor="entry-email">Gmail</label>
+    <input ref={emailInput} id="entry-email" className="email-plain-input" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} autoFocus value={email} onChange={e=>setEmail(e.target.value)} placeholder="seu@gmail.com" required maxLength={254} disabled={busy}/>
+
+    {view==='credentials'&&<>
      <label className="sr-only" htmlFor="entry-password">Senha</label>
-     <div className="email-password"><input id="entry-password" type={show?'text':'password'} autoComplete="current-password" autoFocus value={password} onChange={e=>setPassword(e.target.value)} placeholder="Sua senha" required disabled={busy}/><button type="button" aria-label={show?'Ocultar senha':'Mostrar senha'} onClick={()=>setShow(!show)}>{show?<EyeOff size={18}/>:<Eye size={18}/>}</button></div>
-     <button type="button" className="email-alternative" onClick={()=>setView('recover')} disabled={busy}>Esqueci minha senha</button>
-    </>:<>
-     <label className="sr-only" htmlFor="entry-email">E-mail</label>
-     <input ref={emailInput} id="entry-email" className="email-plain-input" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} autoFocus value={email} onChange={e=>setEmail(e.target.value)} placeholder="seu@email.com" required maxLength={254} disabled={busy}/>
-     {view==='email'&&email.length>0&&!email.includes('@')&&<div className="email-domains" aria-label="Completar domínio do e-mail">{['gmail.com','hotmail.com','outlook.com'].map(domain=><button type="button" key={domain} onClick={()=>{setEmail(email.trim()+'@'+domain);emailInput.current?.focus()}}>@{domain}</button>)}</div>}
-     {view==='recover'&&<p>Enviaremos um link seguro para escolher uma nova senha.</p>}
+     <div className="email-password">
+      <input id="entry-password" type={show?'text':'password'} autoComplete={mode==='signup'?'new-password':'current-password'} value={password} onChange={e=>setPassword(e.target.value)} placeholder={mode==='signup'?'Crie uma senha':'Sua senha'} required minLength={mode==='signup'?8:1} maxLength={128} disabled={busy}/>
+      <button type="button" aria-label={show?'Ocultar senha':'Mostrar senha'} onClick={()=>setShow(!show)}>{show?<EyeOff size={18}/>:<Eye size={18}/>}</button>
+     </div>
+     {mode==='signup'&&<p className="auth-hint">Use pelo menos 8 caracteres.</p>}
+     {mode==='login'&&<button type="button" className="email-alternative" onClick={()=>setView('recover')} disabled={busy}>Esqueci minha senha</button>}
     </>}
+
     {error&&<p className="email-error" role="alert">{error}</p>}
     {notice&&<p className="email-notice" role="status">{notice}</p>}
    </div>
+
    <div className="email-bottom">
-    {view==='email'&&<><p>{mode==='signup'?'Já usa o NivoStudy?':'Primeira vez por aqui?'} <a href={mode==='signup'?'/login':'/criar-conta'}>{mode==='signup'?'Entrar':'Criar conta'}</a></p>{mode==='login'&&<button className="email-alternative" type="button" disabled={!validEmail||busy} onClick={()=>setView('password')}>Usar senha</button>}</>}
-    <div className="email-controls"><button type="button" className="email-back" aria-label="Voltar" onClick={back} disabled={busy}><ArrowLeft size={18}/></button><button className="email-continue" type="submit" disabled={busy||(view==='code'?code.length!==6:view==='password'?!password:!validEmail)}>{busy?<span className="email-spinner" role="status" aria-label="Só um instante"/>:view==='recover'?'Enviar link':view==='code'?'Confirmar e entrar':'Continuar'}</button></div>
+    {view==='credentials'&&<p>{mode==='signup'?'Já usa o NivoStudy?':'Primeira vez por aqui?'} <a href={mode==='signup'?'/login':'/criar-conta'}>{mode==='signup'?'Entrar':'Criar conta'}</a></p>}
+    <div className="email-controls">
+     <button type="button" className="email-back" aria-label="Voltar" onClick={back} disabled={busy}><ArrowLeft size={18}/></button>
+     <button className="email-continue" type="submit" disabled={busy||!validEmail||(view==='credentials'&&!validPassword)}>{busy?<span className="email-spinner" role="status" aria-label="Só um instante"/>:view==='recover'?'Enviar link':mode==='signup'?'Criar conta':'Entrar'}</button>
+    </div>
    </div>
   </form>
  </main>
