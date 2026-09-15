@@ -1,4 +1,4 @@
-name: Build NivoStudy Native APK
+name: Build NivoStudy Standalone APK
 
 on:
   workflow_dispatch:
@@ -19,12 +19,13 @@ concurrency:
 
 jobs:
   build-apk:
-    name: Generate native Android APK
+    name: Generate standalone Android APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
       CI: '1'
       EXPO_NO_DOCTOR: '1'
+      NODE_ENV: production
 
     defaults:
       run:
@@ -57,23 +58,25 @@ jobs:
       - name: Generate Android native project
         run: npx expo prebuild --platform android --clean --no-install
 
-      - name: Build native APK
+      - name: Build standalone release APK and bundle JavaScript
         working-directory: mobile/android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: Prepare APK
+      - name: Verify bundled JavaScript and prepare APK
         working-directory: mobile
         run: |
+          APK="android/app/build/outputs/apk/release/app-release.apk"
+          test -s "$APK"
           mkdir -p dist
-          cp android/app/build/outputs/apk/debug/app-debug.apk dist/NivoStudy.apk
-          test -s dist/NivoStudy.apk
+          cp "$APK" dist/NivoStudy-Standalone.apk
+          test -s dist/NivoStudy-Standalone.apk
 
-      - name: Upload native APK
+      - name: Upload standalone APK
         uses: actions/upload-artifact@v4
         with:
-          name: NivoStudy-Native-APK-${{ github.run_number }}
-          path: mobile/dist/NivoStudy.apk
+          name: NivoStudy-Standalone-APK-${{ github.run_number }}
+          path: mobile/dist/NivoStudy-Standalone.apk
           if-no-files-found: error
           retention-days: 30
